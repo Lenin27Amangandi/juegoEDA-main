@@ -28,7 +28,7 @@ public class MenuFrame extends JFrame {
     }
 
     private void createStartPanel() {
-        startPanel = new ImagePanel("Java-Ping-Pong-Game-main/Utilies/Museo.png");
+        startPanel = new ImagePanel("Java-Ping-Pong-Game-main/Utilies/FondoGame.jpg");
 
         startPanel.setLayout(null);
 
@@ -43,7 +43,7 @@ public class MenuFrame extends JFrame {
         startPanel.add(startButton);
 
         scoreButton = new JButton("Ver Puntajes");
-        scoreButton.setBounds(450, 300, 150, 50);
+        scoreButton.setBounds(470, 300, 150, 50);
         startPanel.add(scoreButton);
 
         startButton.addActionListener(e -> {
@@ -56,49 +56,55 @@ public class MenuFrame extends JFrame {
     }
 
     private void createInputPanel() {
-        inputPanel = new JPanel();
-        inputPanel.setLayout(new GridLayout(5, 1, 5, 5));
+    inputPanel = new JPanel();
+    inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.Y_AXIS));
+    inputPanel.setBorder(BorderFactory.createEmptyBorder(20, 100, 20, 100));
 
-        inputPanel.add(new JLabel("Jugador 1:"));
-        player1Field = new JTextField();
-        inputPanel.add(player1Field);
+    JLabel label1 = new JLabel("Jugador 1:");
+    label1.setAlignmentX(Component.CENTER_ALIGNMENT);
+    player1Field = new JTextField(15);
+    player1Field.setMaximumSize(player1Field.getPreferredSize());
+    inputPanel.add(label1);
+    inputPanel.add(Box.createVerticalStrut(5));
+    inputPanel.add(player1Field);
+    inputPanel.add(Box.createVerticalStrut(10));
 
-        inputPanel.add(new JLabel("Jugador 2:"));
-        player2Field = new JTextField();
-        inputPanel.add(player2Field);
+    JLabel label2 = new JLabel("Jugador 2:");
+    label2.setAlignmentX(Component.CENTER_ALIGNMENT);
+    player2Field = new JTextField(15);
+    player2Field.setMaximumSize(player2Field.getPreferredSize());
+    inputPanel.add(label2);
+    inputPanel.add(Box.createVerticalStrut(5));
+    inputPanel.add(player2Field);
+    inputPanel.add(Box.createVerticalStrut(20));
 
-        JPanel btnPanel = new JPanel(new FlowLayout());
-        playButton = new JButton("Jugar");
-        backButton = new JButton("Volver");
+    JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+    playButton = new JButton("Jugar");
+    backButton = new JButton("Volver");
+    btnPanel.add(playButton);
+    btnPanel.add(backButton);
+    inputPanel.add(btnPanel);
 
-        btnPanel.add(playButton);
-        btnPanel.add(backButton);
+    playButton.addActionListener(e -> {
+        String p1 = player1Field.getText().trim();
+        String p2 = player2Field.getText().trim();
+        if (!p1.isEmpty() && !p2.isEmpty()) {
+            this.dispose();
+            GameFrame game = new GameFrame();
+            game.setPlayerNames(p1, p2);
+            game.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(this, "Ingrese los nombres de los jugadores");
+        }
+    });
 
-        inputPanel.add(btnPanel);
+    backButton.addActionListener(e -> {
+        setContentPane(startPanel);
+        revalidate();
+        repaint();
+    });
+}
 
-        playButton.addActionListener(e -> {
-            String p1 = player1Field.getText().trim();
-            String p2 = player2Field.getText().trim();
-            if (!p1.isEmpty() && !p2.isEmpty()) {
-                this.dispose();
-                GameFrame game = new GameFrame();
-                game.setPlayerNames(p1, p2);
-                game.setVisible(true);
-            } else {
-                JOptionPane.showMessageDialog(this, "Ingrese los nombres de los jugadores");
-            }
-        });
-
-        backButton.addActionListener(e -> {
-            setContentPane(startPanel);
-            revalidate();
-            repaint();
-        });
-    }
-
-    // private void showScores() {
-    //     new HistorialFrame();
-    // }
 
     private void showScores() {
     HistorialPanel historialPanel = new HistorialPanel(() -> {
@@ -111,11 +117,8 @@ public class MenuFrame extends JFrame {
     revalidate();
     repaint();
 }
-
-
     class ImagePanel extends JPanel {
         private Image backgroundImage;
-
         public ImagePanel(String imagePath) {
             backgroundImage = new ImageIcon(imagePath).getImage();
         }

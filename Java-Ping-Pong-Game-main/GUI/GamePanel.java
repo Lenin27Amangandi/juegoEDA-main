@@ -42,7 +42,13 @@ public class GamePanel extends JPanel implements Runnable {
         this.setFocusable(true);
         this.addKeyListener(new AL());
         this.setPreferredSize(SCREEN_SIZE);
-
+            this.addKeyListener(new KeyAdapter() {
+        public void keyPressed(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                endGameManually(); 
+            }
+        }
+    });
         gameThread = new Thread(this);
         gameThread.start();
     }
@@ -121,15 +127,22 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void endGameManually() {
-        if (gameThread != null && gameThread.isAlive()) {
-            gameThread.interrupt();
-        }
-        JOptionPane.showMessageDialog(this,
-                "La partida ha terminado manualmente.\n" +
-                        player1Name + ": " + score.player1 + "\n" +
-                        player2Name + ": " + score.player2);
+      if (this.gameThread != null && this.gameThread.isAlive()) {
+        this.gameThread.interrupt();
+    }
+    JOptionPane.showMessageDialog(this, "La partida ha terminado manualmente.\n" + this.player1Name + ": " + this.score.player1 + "\n" + this.player2Name + ": " + this.score.player2);
+
+    if (this.score.player1 != this.score.player2) {
+        String winner = this.score.player1 > this.score.player2 ? this.player1Name : this.player2Name;
+        String loser = this.score.player1 > this.score.player2 ? this.player2Name : this.player1Name;
+        int winnerScore = Math.max(this.score.player1, this.score.player2);
+        int loserScore = Math.min(this.score.player1, this.score.player2);
+    
+        ScoreManager.saveScore(winner, winnerScore, loser, loserScore);
+    } else {
         ScoreManager.saveScore(this.player1Name, this.score.player1, this.player2Name, this.score.player2);
-        parentFrame.closeGameAndShowMenu();
+    }
+    this.parentFrame.closeGameAndShowMenu();
     }
 
     public void run() {
